@@ -60,15 +60,20 @@ public class Terrain {
 
             int idx = 0;
             int hIdx = 0;
-            int inc = vertexSize - 3;
+            int inc = vertexSize - 6;
             int strength = 4; // multiplier for heightmap
 
-            for (int z = 0; z < heightPitch; z++) {
-                for (int x = 0; x < widthPitch; x++) {
-                    vertices[idx++] = x;
+            for (int x = 0; x < widthPitch; x++) {
+                for (int z = 0; z < heightPitch; z++) {
+                    vertices[idx++] = x;//+rand.nextFloat();
                     vertices[idx++] = heightMap[hIdx++] * strength;
-                    vertices[idx++] = z;
-                    idx += inc;
+                    vertices[idx++] = z;//+rand.nextFloat();
+                    idx++;
+                    vertices[idx++] = rand.nextFloat()*100;
+                    vertices[idx++] = rand.nextFloat()*100;
+                    vertices[idx++] = rand.nextFloat()*100;
+
+                    //idx += inc;
                 }
             }
         }
@@ -105,6 +110,10 @@ public class Terrain {
                 i3 = (short)(i2 + pitch);
                 i4 = (short)(row + pitch);
             }
+        }
+
+        private void calculateNormals(short[] indices, float[] verts){
+
         }
     }
 }

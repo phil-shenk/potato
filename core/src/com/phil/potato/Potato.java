@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.utils.Array;
+import sun.security.provider.certpath.Vertex;
 
 import java.util.Random;
 
@@ -35,18 +36,22 @@ public class Potato extends ApplicationAdapter {
 	public void create () {
 		instancesToRender = new Array<ModelInstance>();
 
+		int vertexSize=7;
 		////////////// BUILD TERRAIN MESH /////////////
-		chunk = new Terrain.TerrainChunk(31, 31, 6);
+		chunk = new Terrain.TerrainChunk(31, 31, vertexSize);
 		this.heightmap = chunk.heightMap;
-		System.out.println(chunk.vertices.length);
-		System.out.println(chunk.heightMap.length);
+
+		// Populate color vertex attributes (the 4th one)
 		int len = chunk.vertices.length;
-		for (int i = 3; i < len; i += 4) {
+		for (int i = 3; i < len; i += vertexSize) {
 			chunk.vertices[i] = Color.toFloatBits(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255), rand.nextInt(255));
-			//chunk.vertices[i] = Color.toFloatBits(heightmap[i/4], heightmap[i/4], heightmap[i/4], 255);
+			//chunk.vertices[i] = Color.toFloatBits(heightmap[i/vertexSize], heightmap[i/vertexSize], heightmap[i/vertexSize], 255);
+			//chunk.vertices[i] = Color.GOLDENROD.toFloatBits();
 		}
-		terrainMesh = new Mesh(true, chunk.vertices.length / 3, chunk.indices.length, new VertexAttribute(VertexAttributes.Usage.Position,
-				3, "a_position"), new VertexAttribute(VertexAttributes.Usage.ColorPacked, 4, "a_color"));
+		terrainMesh = new Mesh(true, chunk.vertices.length / 3, chunk.indices.length,
+				new VertexAttribute(VertexAttributes.Usage.Position, 3, "a_position"),
+				new VertexAttribute(VertexAttributes.Usage.ColorPacked, 4, "a_color"),
+				new VertexAttribute(VertexAttributes.Usage.Normal, 3, "a_normal"));
 
 		terrainMesh.setVertices(chunk.vertices);
 		terrainMesh.setIndices(chunk.indices);
@@ -59,8 +64,10 @@ public class Potato extends ApplicationAdapter {
 		terrainMB.node().id = "lolmap";
 		//terrainMB.part("lolmap", GL20.GL_TRIANGLES, Usage.Position | Usage.ColorPacked, new Material(ColorAttribute.createDiffuse(Color.ORANGE)))
 		//		.addMesh(terrainMesh);
-		terrainMB.part("lolmap", GL20.GL_TRIANGLES, VertexAttributes.Usage.ColorPacked | VertexAttributes.Usage.Position, new Material() )
-				.addMesh(terrainMesh);
+		terrainMB.part("lolmap", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position
+				| VertexAttributes.Usage.ColorPacked
+				| VertexAttributes.Usage.Normal
+				, new Material()).addMesh(terrainMesh);
 		terrainModel = terrainMB.end();
 
 		ModelInstance terrainInstance = new ModelInstance(terrainModel, "lolmap");
@@ -106,6 +113,7 @@ public class Potato extends ApplicationAdapter {
 		modelBatch.begin(cam);
 		modelBatch.render(instancesToRender, environment);
 		modelBatch.end();
+
 
 
 	}
