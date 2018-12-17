@@ -36,7 +36,7 @@ public class Potato extends ApplicationAdapter {
 		instancesToRender = new Array<ModelInstance>();
 
 		////////////// BUILD TERRAIN MESH /////////////
-		chunk = new Terrain.TerrainChunk(31, 31, 4);
+		chunk = new Terrain.TerrainChunk(31, 31, 6);
 		this.heightmap = chunk.heightMap;
 		System.out.println(chunk.vertices.length);
 		System.out.println(chunk.heightMap.length);
