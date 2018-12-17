@@ -44,10 +44,13 @@ public class Potato extends ApplicationAdapter {
 		// Populate color vertex attributes (the 4th one)
 		int len = chunk.vertices.length;
 		for (int i = 3; i < len; i += vertexSize) {
-			chunk.vertices[i] = Color.toFloatBits(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255), rand.nextInt(255));
+			//chunk.vertices[i] = Color.toFloatBits(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255), rand.nextInt(255));
 			//chunk.vertices[i] = Color.toFloatBits(heightmap[i/vertexSize], heightmap[i/vertexSize], heightmap[i/vertexSize], 255);
-			//chunk.vertices[i] = Color.GOLDENROD.toFloatBits();
+			chunk.vertices[i] = Color.GOLDENROD.toFloatBits();
 		}
+
+		System.out.println(chunk.indices.length);
+
 		terrainMesh = new Mesh(true, chunk.vertices.length / 3, chunk.indices.length,
 				new VertexAttribute(VertexAttributes.Usage.Position, 3, "a_position"),
 				new VertexAttribute(VertexAttributes.Usage.ColorPacked, 4, "a_color"),
@@ -55,6 +58,7 @@ public class Potato extends ApplicationAdapter {
 
 		terrainMesh.setVertices(chunk.vertices);
 		terrainMesh.setIndices(chunk.indices);
+
 		///////////////////////////////////////////////
 
 

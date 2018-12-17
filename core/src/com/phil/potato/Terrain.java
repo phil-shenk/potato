@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.math.Vector3;
 
 import java.util.Random;
 
@@ -32,6 +33,7 @@ public class Terrain {
             buildHeightmap("data/heightmap.png");
             buildIndices();
             buildVertices();
+            calculateNormals(indices, vertices);
         }
 
         public void buildHeightmap (String pathToHeightMap) {
@@ -69,10 +71,10 @@ public class Terrain {
                     vertices[idx++] = heightMap[hIdx++] * strength;
                     vertices[idx++] = z;//+rand.nextFloat();
                     idx++;
-                    vertices[idx++] = rand.nextFloat()*100;
-                    vertices[idx++] = rand.nextFloat()*100;
-                    vertices[idx++] = rand.nextFloat()*100;
-
+                    //vertices[idx++] = rand.nextFloat()*100;
+                    //vertices[idx++] = rand.nextFloat()*100;
+                    //vertices[idx++] = rand.nextFloat()*100;
+                    idx += 3;
                     //idx += inc;
                 }
             }
@@ -113,7 +115,49 @@ public class Terrain {
         }
 
         private void calculateNormals(short[] indices, float[] verts){
+            //each square has 2 triangles = 6 indices (w/ 2 pairs of overlap)
+            //so i+= 3 iterates over each triangle
+            for (int i = 0; i < indices.length; i += 3) {
+                int ptAi = indices[i]*vertexSize;
+                int ptBi = indices[i+1]*vertexSize;
+                int ptCi = indices[i+2]*vertexSize;
 
+                //each pt has 3 pos params
+                float x = vertices[ptAi];  //idk if this is the right xyz order
+                float y = vertices[ptAi+1];
+                float z = vertices[ptAi+2];
+                //lol this definitely should not be making vectors to do this im just lazy
+                Vector3 ptA = new Vector3(x, y, z);
+
+                x = vertices[ptBi];
+                y = vertices[ptBi+1];
+                z = vertices[ptBi+2];
+                Vector3 ptB = new Vector3(x,y,z);
+
+                x = vertices[ptCi];
+                y = vertices[ptCi+1];
+                z = vertices[ptCi+2];
+                Vector3 ptC = new Vector3(x,y,z);
+
+                Vector3 side1 = ptB.sub(ptA);
+                Vector3 side2 = ptC.sub(ptA);
+                Vector3 normal = side1.crs(side2);
+
+                float nx = normal.x;
+                float ny = normal.y;
+                float nz = normal.z;
+
+                //normal x=4, y=5, z=6
+                vertices[ptAi+4] = nx;
+                vertices[ptBi+4] = nx;
+                vertices[ptCi+4] = nx;
+                vertices[ptAi+5] = ny;
+                vertices[ptBi+5] = ny;
+                vertices[ptCi+5] = ny;
+                vertices[ptAi+6] = nz;
+                vertices[ptBi+6] = nz;
+                vertices[ptCi+6] = nz;
+            }
         }
     }
 }
